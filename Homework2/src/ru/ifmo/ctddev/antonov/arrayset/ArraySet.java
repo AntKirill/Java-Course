@@ -2,7 +2,6 @@ package ru.ifmo.ctddev.antonov.arrayset;
 
 import java.util.*;
 
-<<<<<<< HEAD
 import static java.util.Comparator.naturalOrder;
 
 /**
@@ -15,7 +14,6 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     private final Comparator<? super E> comparator;
 
     private void makeSet(final Collection<E> collection) {
-        //ArrayList<E> list = new ArrayList<>(collection);
         elements = new ArrayList<E>();
         E lastAdded = null;
         for (E el : collection) {
@@ -42,66 +40,17 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     public ArraySet(final Collection<E> elements, final Comparator<? super E> comparator) {
         this.comparator = comparator;
         makeSet(elements);
-=======
-public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
-
-    private final ArrayList<E> elements;
-    private final Comparator<? super E> comparator;
-
-    public ArraySet(final ArrayList<E> elements) {
-        comparator = null;
-        this.elements = elements;
-        this.elements.sort(comparator);
-    }
-
-    public ArraySet(final ArrayList<E> elements, final Comparator<? super E> comparator) {
-        this.comparator = comparator;
-        this.elements = elements;
-        this.elements.sort(comparator);
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     public ArraySet() {
-        elements = null;
+        elements = new ArrayList<>();
         comparator = null;
     }
 
-<<<<<<< HEAD
     @SuppressWarnings("unchecked")
     private int compare(E a, E b) {
         return comparator == null ? ((Comparable<E>) a).compareTo(b) : comparator.compare(a, b);
     }
-
-    /*if first = true and key exists then will return the index of first element else if key exist
-    the index of the last element if key does not exist will return -1;
-    */
-//    private int binarySearch(final E key, boolean first) {
-//        int left, right;
-//        if (first) {
-//            left = 0;
-//            right = elements.size();
-//        } else {
-//            left = -1;
-//            right = elements.size() - 1;
-//        }
-//        int res;
-//        while (right - left > 1) {
-//            int mid = (left + right) / 2;
-//            res = compare(elements.get(mid), key);
-//            if (first && (res < 0) || !first && (res == 0)) {
-//                left = mid;
-//            } else {
-//                right = mid;
-//            }
-//        }
-//        if (first) {
-//            res = compare(elements.get(left), key);
-//        } else {
-//            res = compare(elements.get(right), key);
-//        }
-//        if (res != 0) return -1;
-//        return left;
-//    }
 
     //return index of E e or of the first greater element
     private int getIndex(E e) throws NullPointerException {
@@ -111,8 +60,6 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
         return -i - 1;
     }
 
-=======
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     /**
      * Returns the greatest element in this set strictly less than the
      * given element, or {@code null} if there is no such element.
@@ -126,14 +73,9 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      *                              and this set does not permit null elements
      */
     @Override
-<<<<<<< HEAD
     public E lower(E e) throws NullPointerException {
         int i = getIndex(e);
         return i > 0 ? elements.get(i - 1) : null;
-=======
-    public E lower(E e) {
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -149,15 +91,10 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      *                              and this set does not permit null elements
      */
     @Override
-<<<<<<< HEAD
     public E floor(E e) throws NullPointerException {
         int i = getIndex(e);
         if (i < elements.size() && compare(e, elements.get(i)) == 0) return elements.get(i);
         return i > 0 ? elements.get(i - 1) : null;
-=======
-    public E floor(E e) {
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -173,14 +110,9 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      *                              and this set does not permit null elements
      */
     @Override
-<<<<<<< HEAD
     public E ceiling(E e) throws NullPointerException {
         int i = getIndex(e);
         return i == elements.size() ? null : elements.get(i);
-=======
-    public E ceiling(E e) {
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -196,15 +128,10 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      *                              and this set does not permit null elements
      */
     @Override
-<<<<<<< HEAD
     public E higher(E e) throws NullPointerException {
         int i = getIndex(e);
         if (i < elements.size() && compare(e, elements.get(i)) == 0) i++;
         return i == elements.size() ? null : elements.get(i);
-=======
-    public E higher(E e) {
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -215,11 +142,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public E pollFirst() {
-<<<<<<< HEAD
         throw new UnsupportedOperationException();
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -230,11 +153,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public E pollLast() {
-<<<<<<< HEAD
         throw new UnsupportedOperationException();
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -244,13 +163,11 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public Iterator<E> iterator() {
-<<<<<<< HEAD
         return new Iterator<E> () {
             int i = -1;
 
             @Override
             public boolean hasNext() {
-                if (elements == null) return false;
                 return i < elements.size() - 1;
             }
 
@@ -264,9 +181,6 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
                 throw new UnsupportedOperationException();
             }
         };
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -285,7 +199,6 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      * @return a reverse order view of this set
      */
     @Override
-<<<<<<< HEAD
     public ArraySet<E> descendingSet() {
         return new ArraySet<>(makeReverse(new ArrayList<>(elements)), Collections.reverseOrder(comparator));
     }
@@ -293,10 +206,6 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     private ArraySet (List<E> elements, Comparator<? super E> comparator) {
         this.elements = elements;
         this.comparator = comparator;
-=======
-    public NavigableSet<E> descendingSet() {
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -307,13 +216,11 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public Iterator<E> descendingIterator() {
-<<<<<<< HEAD
         return new Iterator<E>() {
             int i = elements.size();
 
             @Override
             public boolean hasNext() {
-                if (elements == null) return false;
                 return i > 0;
             }
 
@@ -327,9 +234,6 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
                 throw new UnsupportedOperationException();
             }
         };
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -369,11 +273,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public NavigableSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
-<<<<<<< HEAD
         return this.tailSet(fromElement, fromInclusive).headSet(toElement, toInclusive);
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -404,15 +304,10 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      *                                  bounds of the range
      */
     @Override
-<<<<<<< HEAD
     public NavigableSet<E> headSet(E toElement, boolean inclusive) throws NullPointerException {
         int i = getIndex(toElement);
         if (inclusive && (i < elements.size() && compare(elements.get(i), toElement) == 0)) i++;
         return new ArraySet<>(elements.subList(0, i), comparator);
-=======
-    public NavigableSet<E> headSet(E toElement, boolean inclusive) {
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -444,13 +339,9 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
-<<<<<<< HEAD
         int i = getIndex(fromElement);
         if (i < elements.size() && compare(elements.get(i), fromElement) == 0 && !inclusive) i++;
         return new ArraySet<>(elements.subList(i, elements.size()), comparator);
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -480,11 +371,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public SortedSet<E> subSet(E fromElement, E toElement) {
-<<<<<<< HEAD
         return this.subSet(fromElement, true, toElement, false);
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -499,11 +386,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public SortedSet<E> headSet(E toElement) {
-<<<<<<< HEAD
         return headSet(toElement, false);
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -518,11 +401,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public SortedSet<E> tailSet(E fromElement) {
-<<<<<<< HEAD
         return tailSet(fromElement, true);
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -532,14 +411,9 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      * @throws NoSuchElementException if this set is empty
      */
     @Override
-<<<<<<< HEAD
     public E first() throws NoSuchElementException {
         if (size() == 0) throw new NoSuchElementException();
         return elements.get(0);
-=======
-    public E first() {
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     /**
@@ -550,18 +424,12 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public E last() throws NoSuchElementException {
-<<<<<<< HEAD
         if (size() == 0) throw new NoSuchElementException();
         return elements.get(elements.size() - 1);
-=======
-        return null;
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
     }
 
     @Override
     public int size() {
-<<<<<<< HEAD
-        if (elements == null) return 0;
         return elements.size();
     }
 
@@ -576,8 +444,3 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
         return this.size() == 0;
     }
 }
-=======
-        return elements.size();
-    }
-}
->>>>>>> fff3f270d03a515350027283bb537e4d8383a3f9
