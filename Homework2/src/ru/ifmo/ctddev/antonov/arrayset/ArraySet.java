@@ -25,7 +25,8 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
         this.elements.sort(comparator);
     }
 
-    private List<E> makeReverse(List<E> revElements) {
+    private ArrayList<E> makeReverse(ArrayList<E> revElements) {
+        revElements.clear();
         for (int i = elements.size() - 1; i >= 0; i--) {
             revElements.add(elements.get(i));
         }
@@ -200,7 +201,16 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public ArraySet<E> descendingSet() {
-        return new ArraySet<>(makeReverse(new ArrayList<>(elements)), Collections.reverseOrder(comparator));
+        //return new ArraySet<>(makeReverse(new ArrayList<>(elements)), Collections.reverseOrder(comparator));
+        return new ArraySet<>(this);
+    }
+
+    private ArraySet (ArraySet<E> rhs) {
+        this.elements = new ArrayList<E>();
+        this.comparator = Collections.reverseOrder(rhs.comparator);
+        for (int i = rhs.elements.size() - 1; i >= 0; i--) {
+            this.elements.add(rhs.elements.get(i));
+        }
     }
 
     private ArraySet (List<E> elements, Comparator<? super E> comparator) {
@@ -338,7 +348,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      *                                  bounds of the range
      */
     @Override
-    public NavigableSet<E> tailSet(E fromElement, boolean inclusive) {
+    public NavigableSet<E> tailSet(E fromElement, boolean inclusive) throws NullPointerException {
         int i = getIndex(fromElement);
         if (i < elements.size() && compare(elements.get(i), fromElement) == 0 && !inclusive) i++;
         return new ArraySet<>(elements.subList(i, elements.size()), comparator);
