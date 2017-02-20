@@ -27,7 +27,14 @@ public class RecursiveWalk {
     }
 
     void processLine(BufferedReader in, PrintWriter out, String curFileName) throws IOException {
-        Path path = Paths.get(curFileName);
+        Path path;
+        try {
+            path = Paths.get(curFileName);
+        } catch (InvalidPathException  e) {
+            out.println(String.format("%08x", 0).concat(" ").concat(curFileName));
+            System.out.println(Constants.FILE_NOT_EXISTS.concat(curFileName));
+            return;
+        }
         if (Files.notExists(path)) {
             out.println(String.format("%08x", 0).concat(" ").concat(curFileName));
             System.out.println(Constants.FILE_NOT_EXISTS.concat(curFileName));
@@ -73,7 +80,7 @@ public class RecursiveWalk {
             try {
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(args[0]), "UTF-8"));
                 writer = new PrintWriter(args[1], "UTF-8");
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 throw new IOException(Constants.NO_PATH.concat(args[0]));
             }
             String line;
