@@ -80,6 +80,8 @@ public class Implementor implements Impler {
             throw new ImplerException("Unable to implement");
         } else if (token.isPrimitive()) {
             throw new ImplerException("Class is primitive");
+        } else if (token == Enum.class) {
+            throw new ImplerException("Enum can not be extended");
         }
         allcode = new StringBuilder();
         className = token.getSimpleName().concat(Constants.SUFFIX);
@@ -94,11 +96,14 @@ public class Implementor implements Impler {
         } else {
             allcode.append("extends ");
         }
+
         allcode.append(token.getCanonicalName()).append(" {\n");
+
         if (!appendConstructors(token.getDeclaredConstructors()) && !token.isInterface()) {
             throw new ImplerException("class has no constructors");
         }
         appendMethods(getAllMethods(token));
+
         allcode.append("\n}");
 
         Path genFile = Paths.get(root.toString(), token.getCanonicalName().replace(".", File.separator).concat(Constants.SUFFIX).concat(".java"));
@@ -118,11 +123,6 @@ public class Implementor implements Impler {
     }
 
     public static void main(String[] args) {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("lol");
-//        System.out.println(sb);
-
-        //Implementor implementor = new Implementor();
         if (args.length < 2) {
             System.out.println("Specify the class and the root");
             return;
