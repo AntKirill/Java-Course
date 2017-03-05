@@ -42,5 +42,6 @@ public class Main {
         ArraySet<Integer> desSet = arraySet.descendingSet();
         //SortedSet<Integer> desSet = arraySet.subSet(10, 11);
         dump((ArraySet<Integer>) desSet);
+        desSet.floor(5);
     }
 }

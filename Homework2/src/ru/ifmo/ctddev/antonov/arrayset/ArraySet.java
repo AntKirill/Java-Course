@@ -13,24 +13,20 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
 
     private final Comparator<? super E> comparator;
 
+    private boolean orientation = true;
+
     private void makeSet(final Collection<E> collection) {
         elements = new ArrayList<E>();
+        ArrayList<E> arr = new ArrayList<E>();
+        arr.addAll(collection);
+        Collections.sort(arr, comparator);
         E lastAdded = null;
-        for (E el : collection) {
-            if (lastAdded == null || compare(el,lastAdded) != 0) {
+        for (E el : arr) {
+            if (lastAdded == null || compare(el, lastAdded) != 0) {
                 elements.add(el);
                 lastAdded = el;
             }
         }
-        this.elements.sort(comparator);
-    }
-
-    private ArrayList<E> makeReverse(ArrayList<E> revElements) {
-        revElements.clear();
-        for (int i = elements.size() - 1; i >= 0; i--) {
-            revElements.add(elements.get(i));
-        }
-        return revElements;
     }
 
     public ArraySet(final Collection<E> elements) {
@@ -58,7 +54,11 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
         if (e == null) throw new NullPointerException();
         int i = Collections.binarySearch(elements, e, comparator);
         if (i >= 0) return i;
-        return -i - 1;
+        if (orientation) {
+            return -i - 1;
+        } else {
+            return -i - 2;
+        }
     }
 
     /**
@@ -76,7 +76,11 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     @Override
     public E lower(E e) throws NullPointerException {
         int i = getIndex(e);
-        return i > 0 ? elements.get(i - 1) : null;
+        if (orientation) {
+            return i > 0 ? elements.get(i - 1) : null;
+        } else {
+            return i < (elements.size() - 1) ? elements.get(i + 1) : null;
+        }
     }
 
     /**
@@ -94,8 +98,12 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     @Override
     public E floor(E e) throws NullPointerException {
         int i = getIndex(e);
-        if (i < elements.size() && compare(e, elements.get(i)) == 0) return elements.get(i);
-        return i > 0 ? elements.get(i - 1) : null;
+        if (i >= 0 && i < elements.size() && compare(e, elements.get(i)) == 0) return elements.get(i);
+        if (orientation) {
+            return i > 0 ? elements.get(i - 1) : null;
+        } else {
+            return i < (elements.size() - 1) ? elements.get(i + 1) : null;
+        }
     }
 
     /**
@@ -113,7 +121,11 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     @Override
     public E ceiling(E e) throws NullPointerException {
         int i = getIndex(e);
-        return i == elements.size() ? null : elements.get(i);
+        if (orientation) {
+            return i == elements.size() ? null : elements.get(i);
+        } else {
+            return i < 0 ? null : elements.get(i);
+        }
     }
 
     /**
@@ -131,8 +143,13 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     @Override
     public E higher(E e) throws NullPointerException {
         int i = getIndex(e);
-        if (i < elements.size() && compare(e, elements.get(i)) == 0) i++;
-        return i == elements.size() ? null : elements.get(i);
+        if (orientation && (i < elements.size()) && compare(e, elements.get(i)) == 0) i++;
+        if (!orientation && i >= 0 && compare(e, elements.get(i)) == 0) i--;
+        if (orientation) {
+            return i == elements.size() ? null : elements.get(i);
+        } else {
+            return i < 0 ? null : elements.get(i);
+        }
     }
 
     /**
@@ -163,18 +180,26 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      * @return an iterator over the elements contained in this collection
      */
     @Override
-    public Iterator<E> iterator() {
-        return new Iterator<E> () {
-            int i = -1;
+    public Iterator<E> iterator() throws UnsupportedOperationException {
+        return new Iterator<E>() {
+            int i = orientation ? -1 : elements.size();
 
             @Override
             public boolean hasNext() {
-                return i < elements.size() - 1;
+                if (orientation) {
+                    return i < elements.size() - 1;
+                } else {
+                    return i > 0;
+                }
             }
 
             @Override
             public E next() {
-                return elements.get(++i);
+                if (orientation) {
+                    return elements.get(++i);
+                } else {
+                    return elements.get(--i);
+                }
             }
 
             @Override
@@ -202,18 +227,17 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     @Override
     public ArraySet<E> descendingSet() {
         //return new ArraySet<>(makeReverse(new ArrayList<>(elements)), Collections.reverseOrder(comparator));
-        return new ArraySet<>(this);
+        return new ArraySet<>(this, orientation);
     }
 
-    private ArraySet (ArraySet<E> rhs) {
-        this.elements = new ArrayList<E>();
-        this.comparator = Collections.reverseOrder(rhs.comparator);
-        for (int i = rhs.elements.size() - 1; i >= 0; i--) {
-            this.elements.add(rhs.elements.get(i));
-        }
+    private ArraySet(ArraySet<E> rhs, boolean orientation) {
+        this.elements = rhs.elements;
+        //this.comparator = Collections.reverseOrder(rhs.comparator);
+        this.comparator = rhs.comparator;
+        this.orientation = !orientation;
     }
 
-    private ArraySet (List<E> elements, Comparator<? super E> comparator) {
+    private ArraySet(List<E> elements, Comparator<? super E> comparator) {
         this.elements = elements;
         this.comparator = comparator;
     }
@@ -225,18 +249,26 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      * @return an iterator over the elements in this set, in descending order
      */
     @Override
-    public Iterator<E> descendingIterator() {
-        return new Iterator<E>() {
-            int i = elements.size();
+    public Iterator<E> descendingIterator() throws UnsupportedOperationException {
+        return new Iterator<E>( ) {
+            int i = orientation ? elements.size() : -1;
 
             @Override
             public boolean hasNext() {
-                return i > 0;
+                if (orientation) {
+                    return i > 0;
+                } else {
+                    return i < elements.size() - 1;
+                }
             }
 
             @Override
             public E next() {
-                return elements.get(--i);
+                if (orientation) {
+                    return elements.get(--i);
+                } else {
+                    return elements.get(++i);
+                }    
             }
 
             @Override
@@ -315,8 +347,14 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public NavigableSet<E> headSet(E toElement, boolean inclusive) throws NullPointerException {
+        if (!orientation) {
+            orientation = true;
+            NavigableSet<E> tmp =  this.tailSet(toElement, inclusive);
+            orientation = false;
+            return tmp;
+        }
         int i = getIndex(toElement);
-        if (inclusive && (i < elements.size() && compare(elements.get(i), toElement) == 0)) i++;
+        if (orientation && inclusive && (i < elements.size() && compare(elements.get(i), toElement) == 0)) i++;
         return new ArraySet<>(elements.subList(0, i), comparator);
     }
 
@@ -349,8 +387,15 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      */
     @Override
     public NavigableSet<E> tailSet(E fromElement, boolean inclusive) throws NullPointerException {
+        if (!orientation) {
+            orientation = true;
+            NavigableSet<E> tmp =  this.headSet(fromElement, inclusive);
+            orientation = false;
+            return tmp;
+        }
         int i = getIndex(fromElement);
-        if (i < elements.size() && compare(elements.get(i), fromElement) == 0 && !inclusive) i++;
+        if (orientation && i < elements.size() && compare(elements.get(i), fromElement) == 0 && !inclusive) i++;
+        if (!orientation && i > 0 && compare(elements.get(i), fromElement) == 0 && !inclusive) i--;
         return new ArraySet<>(elements.subList(i, elements.size()), comparator);
     }
 
@@ -376,7 +421,7 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
      * @param fromElement
      * @param toElement
      * @throws ClassCastException       {@inheritDoc}
-     * @throws NullPointerException     {@inheritDoc}
+     * @throws NullPointerException     {@inheritDoc}java -cp lib/*:./src info.kgeorgiy.java.advanced.arrayset.Tester NavigableSet ru.ifmo.ctddev.antonov.arrayset.ArraySet
      * @throws IllegalArgumentException {@inheritDoc}
      */
     @Override
@@ -423,7 +468,11 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     @Override
     public E first() throws NoSuchElementException {
         if (size() == 0) throw new NoSuchElementException();
-        return elements.get(0);
+        if (orientation) {
+            return elements.get(0);
+        } else {
+            return elements.get(elements.size() - 1);
+        }
     }
 
     /**
@@ -435,7 +484,11 @@ public class ArraySet<E> extends AbstractSet<E> implements NavigableSet<E> {
     @Override
     public E last() throws NoSuchElementException {
         if (size() == 0) throw new NoSuchElementException();
-        return elements.get(elements.size() - 1);
+        if (orientation) {
+            return elements.get(elements.size() - 1);
+        } else {
+            return elements.get(0);
+        }
     }
 
     @Override
