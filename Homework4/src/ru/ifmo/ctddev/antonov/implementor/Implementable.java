@@ -7,13 +7,27 @@ import java.lang.reflect.Modifier;
  * Created by kirill on 2/26/17.
  */
 abstract public class Implementable {
+    /**
+     * Contatins method or constructor to implement.
+     */
     protected StringBuilder s = new StringBuilder();
+    /**
+     * Amount of arguments in constructor or method
+     */
     protected Integer amountOfVariables = 0;
-    //protected final String nameOfArg = "arg";
 
+    /**
+     * For taking out implemented method or constructor
+     * @return generated method or constructor
+     */
     public String getToPrint() {
         return s.toString();
     }
+
+    /**
+     * Add modifiers.
+     * @param m modifiers of method or constructor
+     */
 
     protected void setModifiers(int m) {
         if (Modifier.isPrivate(m)) {
@@ -25,6 +39,10 @@ abstract public class Implementable {
         }
     }
 
+    /**
+     * Add Annotation.
+     * @param annotations - all annotations for method or constructor
+     */
     protected void setAnnotation(Annotation[] annotations) {
         for (Annotation a: annotations) {
             s.append("\n");
@@ -33,14 +51,26 @@ abstract public class Implementable {
         s.append("\n");
     }
 
+    /**
+     * Add type that method returns.
+     * @param returnType type that method returns.
+     */
     protected void setReturnType(Class<?> returnType) {
         s.append(returnType.getCanonicalName()).append(" ");
     }
 
+    /**
+     * Add name.
+     * @param name
+     */
     protected void setName(String name) {
         s.append(name).append(" (");
     }
 
+    /**
+     * Add parameters of method or constructor.
+     * @param params
+     */
     protected void setParams(Class<?>[] params) {
         boolean first = true;
         for (Class<?> p : params) {
@@ -53,6 +83,10 @@ abstract public class Implementable {
         s.append(")");
     }
 
+    /**
+     * Add exceptions to constructor or method.
+     * @param exceptions thar constructor or method witch we are generating may throw.
+     */
     protected void setExceptions(Class<?>[] exceptions) {
         if (exceptions.length > 0) {
             s.append(" throws ");
@@ -67,6 +101,10 @@ abstract public class Implementable {
         }
     }
 
+    /**
+     * Realistion of constructors and methods is defferent so method is implemented for constructor and method separately.
+     * @param retType type that method return, null for constructors.
+     */
     abstract protected void setRealisation(Class<?> retType);
 
 }

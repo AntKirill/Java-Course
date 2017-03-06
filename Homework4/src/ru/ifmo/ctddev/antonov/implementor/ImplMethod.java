@@ -10,6 +10,11 @@ import java.lang.reflect.Method;
 
 public class ImplMethod extends Implementable {
 
+    /**
+     * Perform generation of constructors realisation
+     *
+     * @param retType constructor that we want to implement
+     */
     @Override
     protected void setRealisation(Class<?> retType) {
         s.append(" {\nreturn");
@@ -23,6 +28,11 @@ public class ImplMethod extends Implementable {
         s.append("\n}");
     }
 
+    /**
+     * Perform generation of every method.
+     *
+     * @param m method that we want to implement
+     */
     public ImplMethod(Method m) {
         super.setAnnotation(m.getAnnotations());
         super.setModifiers(m.getModifiers());

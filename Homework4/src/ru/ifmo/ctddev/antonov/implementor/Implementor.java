@@ -19,8 +19,16 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+
 public class Implementor implements JarImpler {
 
+    /**
+     * Findes all methods that needed to be implemented.
+     * <p>
+     *
+     * @param token is a type token of class that we want to implement
+     * @return ArrayList of Method witch contains all methods to implement
+     */
     private ArrayList<Method> getAllMethods(Class<?> token) {
         ArrayList<Method> all = new ArrayList<>();
         Collections.addAll(all, token.getMethods());
@@ -34,9 +42,23 @@ public class Implementor implements JarImpler {
         return all;
     }
 
+    /**
+     * name of class that we want to implement
+     */
     private String className;
+
+    /**
+     * all methods, consturctors
+     */
     private StringBuilder allcode;
 
+    /**
+     * Appends implemented constructors to <tt>allcode</tt>
+     * <p>
+     *
+     * @param constrs all constructors to implement
+     * @return false if there are only private constructors, true otherwise
+     */
     private boolean appendConstructors(Constructor[] constrs) {
         boolean onlyPrivate = true;
         for (Constructor c: constrs) {
@@ -49,6 +71,14 @@ public class Implementor implements JarImpler {
         return !onlyPrivate;
     }
 
+    /**
+     * Appedns implemented methods to <tt>allcode</tt>.
+     *
+     * <p>
+     *
+     * @param allMethods all methods to implement
+     *
+     */
     private void appendMethods(ArrayList<Method> allMethods) {
         Map<Integer, Method> methodsToImpl = new HashMap<>();
         for (Method method: allMethods) {
@@ -62,10 +92,27 @@ public class Implementor implements JarImpler {
         }
     }
 
+    /**
+     * Add all code from class specified by provided <tt>token</tt> to StringBuilder <tt>allcode</tt>
+     * <p>
+     *
+     * @param method method to hash
+     *
+     */
     private Integer getHash(Method method) {
         return method.getName().hashCode() + Arrays.hashCode(method.getParameterTypes());
     }
 
+    /**
+     * Add all code from class specified by provided <tt>token</tt> to StringBuilder <tt>allcode</tt>.
+     *
+     * It is checking weather class is primitive, or enum {@link java.lang.Enum}.
+     * <p>
+     *
+     * @param token type token to create implementation for.
+     * @throws ImplerException when implementation cannot be
+     *                         generated.
+     */
     private void makeCode(Class<?> token) throws ImplerException {
         if (Modifier.isFinal(token.getModifiers())) {
             throw new ImplerException("Unable to implement");
@@ -98,7 +145,9 @@ public class Implementor implements JarImpler {
         allcode.append("\n}");
     }
 
-
+    /**
+     * Path defines an Absolute Path for generated file
+     */
     Path finalPath;
     /**
      * Produces code implementing class or interface specified by provided <tt>token</tt>.
@@ -132,6 +181,14 @@ public class Implementor implements JarImpler {
 
     }
 
+    /**
+     * Produces <tt>.jar</tt> file implementing class or interface specified by provided <tt>args</tt>.
+     * <p>
+     * Generated class full name should be same as full name of the type token with <tt>Impl</tt> suffix
+     * added.
+     *
+     * @param args three strings first might be -jar, second type topen of class, third is destination of jar file
+     */
     public static void main(String[] args) {
         if (args.length < 3) {
             System.out.println("Run with -jar option, specify the class and the root");
@@ -173,7 +230,7 @@ public class Implementor implements JarImpler {
             throw new ImplerException("can not genrate code");
         }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if ((compiler.run(null, null, null, finalPath.toString()))!=0) {
+        if ((compiler.run(null, null, null, "-encoding", "Cp866", finalPath.toString()))!=0) {
             throw new ImplerException("Can not compile generated file");
         }
         String nameOfJava = finalPath.toString();

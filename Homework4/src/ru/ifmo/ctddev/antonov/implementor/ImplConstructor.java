@@ -7,6 +7,12 @@ import java.lang.reflect.Constructor;
  */
 public class ImplConstructor extends Implementable {
 
+
+    /**
+     * Perform generation of constructors realisation
+     *
+     * @param retType constructor that we want to implement
+     */
     @Override
     protected void setRealisation(Class<?> retType) {
         s.append(" {\nsuper(");
@@ -20,6 +26,12 @@ public class ImplConstructor extends Implementable {
 
     }
 
+    /**
+     * Perform generation of every constructor.
+     *
+     * @param c constructor that we want to implement
+     * @param className name of class for implementing
+     */
     public ImplConstructor(Constructor c, String className) {
         super.setAnnotation(c.getAnnotations());
         super.setModifiers(c.getModifiers());

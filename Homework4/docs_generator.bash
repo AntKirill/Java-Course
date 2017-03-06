@@ -1,0 +1,1 @@
+javadoc -d docs/ -sourcepath src -link https://docs.oracle.com/javase/8/docs/api/ -private  ru.ifmo.ctddev.antonov.implementor info.kgeorgiy.java.advanced.implementor 
