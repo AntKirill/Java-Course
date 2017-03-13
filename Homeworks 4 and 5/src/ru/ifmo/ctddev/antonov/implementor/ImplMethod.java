@@ -3,9 +3,10 @@ package ru.ifmo.ctddev.antonov.implementor;
 import info.kgeorgiy.java.advanced.implementor.Impler;
 
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 
 /**
- * Created by kirill on 2/26/17.
+ * Class that contains methods for performing operations that {@link Implementor} invokes.
  */
 
 public class ImplMethod extends Implementable {
@@ -30,6 +31,8 @@ public class ImplMethod extends Implementable {
 
     /**
      * Perform generation of every method.
+     * </p>
+     * This method invokes by {@link ru.ifmo.ctddev.antonov.implementor.Implementor#implement(Class, Path )}
      *
      * @param m method that we want to implement
      */

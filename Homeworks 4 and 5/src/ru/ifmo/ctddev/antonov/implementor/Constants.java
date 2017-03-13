@@ -1,7 +1,7 @@
 package ru.ifmo.ctddev.antonov.implementor;
 
 /**
- * Created by kirill on 2/26/17.
+ * Class that contains constants for {@link Implementor}, {@link ImplConstructor}, {@link ImplMethod}.
  */
 public class Constants {
     /**

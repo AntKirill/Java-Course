@@ -19,15 +19,20 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+/**
+ * Class for implementing classes and interfaces to specified by the user directory.
+ * </p>
+ * Implements {@link info.kgeorgiy.java.advanced.implementor.Impler} and {@link info.kgeorgiy.java.advanced.implementor.JarImpler} interfaces.
+ */
 
-public class Implementor implements JarImpler {
+public class Implementor implements Impler, JarImpler {
 
     /**
      * Findes all methods that needed to be implemented.
      * <p>
      *
      * @param token is a type token of class that we want to implement
-     * @return ArrayList of Method witch contains all methods to implement
+     * @return ArrayList {@link java.util.ArrayList} of Method witch contains all methods to implement
      */
     private ArrayList<Method> getAllMethods(Class<?> token) {
         ArrayList<Method> all = new ArrayList<>();
@@ -48,7 +53,7 @@ public class Implementor implements JarImpler {
     private String className;
 
     /**
-     * all methods, consturctors
+     * StringBuilder {@link java.lang.StringBuilder} instance that contains all strings that we want to see in the produced file.
      */
     private StringBuilder allcode;
 
@@ -93,7 +98,7 @@ public class Implementor implements JarImpler {
     }
 
     /**
-     * Add all code from class specified by provided <tt>token</tt> to StringBuilder <tt>allcode</tt>
+     * Add all code from class specified by provided <tt>token</tt> to {@link java.lang.StringBuilder} <tt>allcode</tt>
      * <p>
      *
      * @param method method to hash
@@ -104,13 +109,13 @@ public class Implementor implements JarImpler {
     }
 
     /**
-     * Add all code from class specified by provided <tt>token</tt> to StringBuilder <tt>allcode</tt>.
+     * Add all code from class specified by provided <tt>token</tt> to {@link java.lang.StringBuilder} <tt>allcode</tt>.
      *
-     * It is checking weather class is primitive, or enum {@link java.lang.Enum}.
+     * It is checking weather class is primitive, final or {@link java.lang.Enum} and throws exception if it is.
      * <p>
      *
      * @param token type token to create implementation for.
-     * @throws ImplerException when implementation cannot be
+     * @throws ImplerException {@link info.kgeorgiy.java.advanced.implementor.ImplerException} when implementation cannot be
      *                         generated.
      */
     private void makeCode(Class<?> token) throws ImplerException {
@@ -146,7 +151,9 @@ public class Implementor implements JarImpler {
     }
 
     /**
-     * Path defines an Absolute Path for generated file
+     * Path defines an Absolute Path for generated file.
+     * </p>
+     * See {@link java.nio.file.Path}
      */
     Path finalPath;
     /**
@@ -171,15 +178,46 @@ public class Implementor implements JarImpler {
             Files.createDirectories(genFile.getParent());
             Files.deleteIfExists(genFile);
             finalPath = Files.createFile(genFile);
-            try (PrintWriter pw = new PrintWriter(finalPath.toString(), Constants.CHARSET)) {
-                pw.print(allcode);
+
+            class CharSetFilter extends FilterWriter {
+
+                public CharSetFilter(Writer writer) {
+                    super(writer);
+                }
+
+                @Override
+                public void write(int i) throws IOException {
+                    if (i < 128) {
+                        super.write(i);
+                    } else {
+                        super.write(String.format("\\u%04X", i));
+                    }
+                }
+
+                @Override
+                public void write(char[] chars, int i, int i1) throws IOException {
+                    for (int j = i; j < i + i1; j++) {
+                        write(chars[i]);
+                    }
+                }
+
+                @Override
+                public void write(String s, int i, int i1) throws IOException {
+                    for (char ch: s.substring(i, i + i1).toCharArray()) {
+                        write((int) ch);
+                    }
+                }
+            }
+
+            try (Writer pw = new CharSetFilter( new PrintWriter(finalPath.toString(), Constants.CHARSET)) ){
+                pw.write(allcode.toString());
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-
-
     }
+
+
 
     /**
      * Produces <tt>.jar</tt> file implementing class or interface specified by provided <tt>args</tt>.
@@ -221,7 +259,7 @@ public class Implementor implements JarImpler {
      *
      * @param token   type token to create implementation for.
      * @param jarFile target <tt>.jar</tt> file.
-     * @throws ImplerException when implementation cannot be generated.
+     * @throws ImplerException {@link info.kgeorgiy.java.advanced.implementor.ImplerException} when implementation cannot be generated.
      */
     @Override
     public void implementJar(Class<?> token, Path jarFile) throws ImplerException {
@@ -230,7 +268,7 @@ public class Implementor implements JarImpler {
             throw new ImplerException("can not genrate code");
         }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if ((compiler.run(null, null, null, "-encoding", "Cp866", finalPath.toString()))!=0) {
+        if ((compiler.run(null, null, null,  "-encoding", "Cp866", finalPath.toString()))!=0) {
             throw new ImplerException("Can not compile generated file");
         }
         String nameOfJava = finalPath.toString();

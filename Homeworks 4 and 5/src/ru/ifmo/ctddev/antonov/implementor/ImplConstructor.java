@@ -1,9 +1,10 @@
 package ru.ifmo.ctddev.antonov.implementor;
 
 import java.lang.reflect.Constructor;
+import java.nio.file.Path;
 
 /**
- * Created by kirill on 2/26/17.
+ * Class that contains methods for performing operations that {@link Implementor} invokes.
  */
 public class ImplConstructor extends Implementable {
 
@@ -28,6 +29,9 @@ public class ImplConstructor extends Implementable {
 
     /**
      * Perform generation of every constructor.
+     * </p>
+     *
+     * This method invokes by {@link ru.ifmo.ctddev.antonov.implementor.Implementor#implement(Class, Path)}
      *
      * @param c constructor that we want to implement
      * @param className name of class for implementing

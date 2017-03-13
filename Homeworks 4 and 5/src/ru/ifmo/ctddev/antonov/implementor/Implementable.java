@@ -4,11 +4,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 
 /**
- * Created by kirill on 2/26/17.
+ * Abstract class that contains methods and fields that {@link ImplMethod} and {@link ImplConstructor} classes use.
+ * </p>
+ * See {@link ru.ifmo.ctddev.antonov.implementor.ImplMethod#setRealisation(Class)} and {@link ru.ifmo.ctddev.antonov.implementor.ImplConstructor#setRealisation(Class)}
  */
 abstract public class Implementable {
     /**
-     * Contatins method or constructor to implement.
+     * {@link java.lang.StringBuilder} that contains method or constructor to implement.
      */
     protected StringBuilder s = new StringBuilder();
     /**
@@ -25,7 +27,9 @@ abstract public class Implementable {
     }
 
     /**
-     * Add modifiers.
+     * Add modifiers to {@link Implementable#s}.
+     * </p>
+     *
      * @param m modifiers of method or constructor
      */
 
@@ -40,7 +44,8 @@ abstract public class Implementable {
     }
 
     /**
-     * Add Annotation.
+     * Add Annotation to {@link Implementable#s}.
+     * </p>
      * @param annotations - all annotations for method or constructor
      */
     protected void setAnnotation(Annotation[] annotations) {
@@ -52,7 +57,9 @@ abstract public class Implementable {
     }
 
     /**
-     * Add type that method returns.
+     * Add type that method returns to to {@link Implementable#s}.
+     * </p>
+     *
      * @param returnType type that method returns.
      */
     protected void setReturnType(Class<?> returnType) {
@@ -68,7 +75,9 @@ abstract public class Implementable {
     }
 
     /**
-     * Add parameters of method or constructor.
+     * Add parameters of method or constructor to {@link Implementable#s}.
+     * </p>
+     *
      * @param params
      */
     protected void setParams(Class<?>[] params) {
@@ -84,7 +93,8 @@ abstract public class Implementable {
     }
 
     /**
-     * Add exceptions to constructor or method.
+     * Add exceptions to constructor or method to {@link Implementable#s}.
+     * </p>
      * @param exceptions thar constructor or method witch we are generating may throw.
      */
     protected void setExceptions(Class<?>[] exceptions) {
@@ -103,6 +113,8 @@ abstract public class Implementable {
 
     /**
      * Realistion of constructors and methods is defferent so method is implemented for constructor and method separately.
+     * See {@link ru.ifmo.ctddev.antonov.implementor.ImplMethod#setRealisation(Class)} and {@link ru.ifmo.ctddev.antonov.implementor.ImplConstructor#setRealisation(Class)}
+     * </p>
      * @param retType type that method return, null for constructors.
      */
     abstract protected void setRealisation(Class<?> retType);
