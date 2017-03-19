@@ -38,7 +38,7 @@ public class Implementor implements Impler, JarImpler {
         ArrayList<Method> all = new ArrayList<>();
         Collections.addAll(all, token.getMethods());
         for (Class<?> cl = token; cl != null; cl = cl.getSuperclass()) {
-            for (Method m: cl.getDeclaredMethods()) {
+            for (Method m : cl.getDeclaredMethods()) {
                 if (!Modifier.isPrivate(m.getModifiers()) && Modifier.isAbstract(m.getModifiers())) {
                     all.add(m);
                 }
@@ -48,7 +48,7 @@ public class Implementor implements Impler, JarImpler {
     }
 
     /**
-     * name of class that we want to implement
+     * Name of class that we want to implement
      */
     private String className;
 
@@ -66,7 +66,7 @@ public class Implementor implements Impler, JarImpler {
      */
     private boolean appendConstructors(Constructor[] constrs) {
         boolean onlyPrivate = true;
-        for (Constructor c: constrs) {
+        for (Constructor c : constrs) {
             Implementable k = new ImplConstructor(c, className);
             allcode.append("\n\n").append(k.getToPrint());
             if (!Modifier.isPrivate(c.getModifiers())) {
@@ -78,20 +78,18 @@ public class Implementor implements Impler, JarImpler {
 
     /**
      * Appedns implemented methods to <tt>allcode</tt>.
-     *
      * <p>
      *
      * @param allMethods all methods to implement
-     *
      */
     private void appendMethods(ArrayList<Method> allMethods) {
         Map<Integer, Method> methodsToImpl = new HashMap<>();
-        for (Method method: allMethods) {
+        for (Method method : allMethods) {
             if (Modifier.isAbstract(method.getModifiers())) {
-                methodsToImpl.put(getHash(method),method);
+                methodsToImpl.put(getHash(method), method);
             }
         }
-        for (Method method: methodsToImpl.values()) {
+        for (Method method : methodsToImpl.values()) {
             Implementable k = new ImplMethod(method);
             allcode.append("\n\n").append(k.getToPrint());
         }
@@ -102,7 +100,6 @@ public class Implementor implements Impler, JarImpler {
      * <p>
      *
      * @param method method to hash
-     *
      */
     private Integer getHash(Method method) {
         return method.getName().hashCode() + Arrays.hashCode(method.getParameterTypes());
@@ -110,7 +107,7 @@ public class Implementor implements Impler, JarImpler {
 
     /**
      * Add all code from class specified by provided <tt>token</tt> to {@link java.lang.StringBuilder} <tt>allcode</tt>.
-     *
+     * <p>
      * It is checking weather class is primitive, final or {@link java.lang.Enum} and throws exception if it is.
      * <p>
      *
@@ -156,6 +153,7 @@ public class Implementor implements Impler, JarImpler {
      * See {@link java.nio.file.Path}
      */
     Path finalPath;
+
     /**
      * Produces code implementing class or interface specified by provided <tt>token</tt>.
      * <p>
@@ -179,44 +177,62 @@ public class Implementor implements Impler, JarImpler {
             Files.deleteIfExists(genFile);
             finalPath = Files.createFile(genFile);
 
+            /**
+             * Class for converting unknown symbols to unicode.
+             */
             class CharSetFilter extends FilterWriter {
 
+                /**
+                 * Invokes constructor of super class
+                 * @param writer object that extends {@link java.io.Writer} abstract class.
+                 *
+                 */
                 public CharSetFilter(Writer writer) {
                     super(writer);
                 }
 
+                /**
+                 * Writes number of symbol in unicode or symbol.
+                 * @param i number of symbol
+                 * @throws IOException
+                 */
                 @Override
                 public void write(int i) throws IOException {
-                    if (i < 128) {
-                        super.write(i);
-                    } else {
-                        super.write(String.format("\\u%04X", i));
-                    }
+                    out.write(String.format("\\u%04X", i));
                 }
 
+                /**
+                 * Writes number of symbol in unicode or symbol.
+                 * @param i number of symbol
+                 * @throws IOException
+                 */
                 @Override
                 public void write(char[] chars, int i, int i1) throws IOException {
                     for (int j = i; j < i + i1; j++) {
-                        write(chars[i]);
+                        write(chars[j]);
                     }
                 }
 
+                /**
+                 * Writes number of symbol in unicode or symbol.
+                 * @param i number of symbol
+                 * @throws IOException
+                 */
                 @Override
                 public void write(String s, int i, int i1) throws IOException {
-                    for (char ch: s.substring(i, i + i1).toCharArray()) {
-                        write((int) ch);
+                    for (char ch : s.substring(i, i + i1).toCharArray()) {
+                        write(ch);
                     }
                 }
             }
 
-            try (Writer pw = new CharSetFilter( new PrintWriter(finalPath.toString(), Constants.CHARSET)) ){
+            try (Writer pw = new CharSetFilter(new PrintWriter(finalPath.toString(), Constants.CHARSET))) {
                 pw.write(allcode.toString());
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
-
 
 
     /**
@@ -268,13 +284,13 @@ public class Implementor implements Impler, JarImpler {
             throw new ImplerException("can not genrate code");
         }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if ((compiler.run(null, null, null,  "-encoding", "Cp866", finalPath.toString()))!=0) {
+        if ((compiler.run(null, null, null, "-encoding", "Cp866", finalPath.toString())) != 0) {
             throw new ImplerException("Can not compile generated file");
         }
         String nameOfJava = finalPath.toString();
         String nameOfClass = nameOfJava.substring(0, nameOfJava.length() - 4).concat("class");
         String nameOfJar = jarFile.toString().concat(File.separator).concat(token.getSimpleName()).concat(Constants.SUFFIX).concat(".jar");
-        File fileWithClass = new File (nameOfClass);
+        File fileWithClass = new File(nameOfClass);
 
         try (InputStream genClass = new FileInputStream(fileWithClass);
              JarOutputStream genJar = new JarOutputStream(new FileOutputStream(nameOfJar))) {
@@ -283,7 +299,7 @@ public class Implementor implements Impler, JarImpler {
             JarEntry jarEntry = new JarEntry(nameOfClass);
             jarEntry.setTime(System.currentTimeMillis());
             genJar.putNextEntry(jarEntry);
-            byte [] buf = new byte[1024];
+            byte[] buf = new byte[1024];
             int cnt = 0;
             while ((cnt = genClass.read(buf)) >= 0) {
                 genJar.write(buf, 0, cnt);
