@@ -86,9 +86,7 @@ public class IterativeParallelism implements ListIP {
 
     @Override
     public <T> List<T> filter(int var1, List<? extends T> var2, Predicate<? super T> var3) throws InterruptedException {
-        return performInParallel(var1, var2,
-                x -> x.stream().filter(var3).collect(Collectors.toList()),
-                x -> x.stream().reduce(new ArrayList<T>(), (a, b) -> {
+        return performInParallel(var1, var2, x -> x.stream().filter(var3).collect(Collectors.toList()), x -> x.stream().reduce(new ArrayList<T>(), (a, b) -> {
                     a.addAll(b);
                     return a;
                 }));
@@ -96,9 +94,7 @@ public class IterativeParallelism implements ListIP {
 
     @Override
     public <T, U> List<U> map(int var1, List<? extends T> var2, Function<? super T, ? extends U> var3) throws InterruptedException {
-        return performInParallel(var1, var2,
-                x -> x.stream().map(var3).collect(Collectors.toList()),
-                x -> x.stream().reduce(new ArrayList<U>(), (a, b) -> {
+        return performInParallel(var1, var2, x -> x.stream().map(var3).collect(Collectors.toList()), x -> x.stream().reduce(new ArrayList<U>(), (a, b) -> {
                     a.addAll(b);
                     return a;
                 }));
