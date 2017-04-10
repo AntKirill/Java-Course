@@ -22,7 +22,8 @@ public class ConcurrentQueue {
      * Add task to queue. Queue is locked in the process of adding
      * @param ap - another task
      */
-    public synchronized void add(Task<?, ?> ap) {
+    public 
+    synchronized void add(Task<?, ?> ap) {
         taskQueue.add(ap);
         notifyAll();
     }
