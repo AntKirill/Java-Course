@@ -3,16 +3,13 @@ package ru.ifmo.ctddev.antonov.concurrent;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- * Created by kirill on 3/20/17.
- */
 public class Applier <T, R> implements Runnable {
 
-    private Function<List<? extends T>, R> func;
+    private Function<List<? extends T>, ? extends R> func;
     private List<? extends T> l;
-    private R result;
+    private R result = null;
 
-    public Applier(Function<List<? extends T>, R> func, List<? extends T> l) {
+    public  Applier(Function<List<? extends T>, R> func, List<? extends T> l) {
         this.func = func;
         this.l = l;
     }
@@ -22,7 +19,7 @@ public class Applier <T, R> implements Runnable {
         result = func.apply(l);
     }
 
-    public R getResult() {
+    public R getResult() throws InterruptedException {
         return result;
     }
 }
