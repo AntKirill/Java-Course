@@ -18,7 +18,9 @@ public class HelloUDPServer implements HelloServer {
     private volatile boolean isRunnig = true;
 
     /**
-     *
+     * Invokes Server.
+     * @param port - port to take queries.
+     * @param threads - max amount of working threads for server.
      */
     @Override
     public void start(int port, int threads) {
@@ -55,7 +57,8 @@ public class HelloUDPServer implements HelloServer {
     }
 
     /**
-     *
+     * Stop server.
+     * This method interrupts the work of the server.
      */
     @Override
     public void close() {
