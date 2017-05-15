@@ -55,18 +55,17 @@ public class HelloUDPClient implements HelloClient {
                         try {
                             socket.send(new DatagramPacket(forSnd, forSnd.length, address, port));
                         } catch (IOException e) {
-                            System.out.println("Data can't not be sent via this socket");
-                            e.printStackTrace();
-                            return;
+                            System.out.println("Data can not be sent via this socket");
                         }
                         DatagramPacket serversAnswerInPacket = new DatagramPacket(forRec, forRec.length);
                         try {
                             socket.receive(serversAnswerInPacket);
+                            String answer = new String(serversAnswerInPacket.getData(), 0, serversAnswerInPacket.getLength());
+                            if (!answer.contains(curQueryText)) {
+                                --j;
+                            }
                         } catch (IOException e) {
-                            --j;
-                        }
-                        String answer = new String(serversAnswerInPacket.getData(), 0, serversAnswerInPacket.getLength());
-                        if (!answer.equals("Hello, " + curQueryText)) {
+                            //System.out.println("rofl");
                             --j;
                         }
                     }
