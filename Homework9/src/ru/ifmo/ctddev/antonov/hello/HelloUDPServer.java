@@ -12,6 +12,18 @@ import java.util.concurrent.Executors;
 
 public class HelloUDPServer implements HelloServer {
 
+    /**
+     * Main method to run server.
+     * @param args - arguments of server.
+     */
+    public static void main(String args[]) {
+        if (args.length != 2) {
+            System.out.print("Run with 2 arguments");
+            return;
+        }
+        new HelloUDPServer().start(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+    }
+
     private static final Charset charset = Charset.forName("UTF-8");
     private DatagramSocket socket;
     private ExecutorService threadPool;
@@ -45,7 +57,7 @@ public class HelloUDPServer implements HelloServer {
 
                     try {
                         socket.receive(query);
-                        byte[] resp = ("Hello, ".concat(new String(query.getData(), 0, query.getLength()))).getBytes(charset);
+                        byte[] resp = ("Hello, ".concat(new String(query.getData(), 0, query.getLength(), charset))).getBytes(charset);
                         DatagramPacket response = new DatagramPacket(resp, resp.length, query.getAddress(), query.getPort());
                         socket.send(response);
                     } catch (IOException e) {

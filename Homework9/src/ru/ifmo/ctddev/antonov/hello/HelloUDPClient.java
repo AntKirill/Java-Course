@@ -10,6 +10,18 @@ public class HelloUDPClient implements HelloClient {
     private final Integer timeOut = 200;
 
     /**
+     * main method to start client.
+     * @param args - arguments of client.
+     */
+    public static void main(String args[]) {
+        if (args.length != 5 ) {
+            System.out.println("There must be 5 arguments");
+            return;
+        }
+        new HelloUDPClient().run(args[0], Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+    }
+
+    /**
      * Invokes client who sending some request and waiting for answer that contains this request with prefix "Hello, ".
      * @param host - servers host
      * @param port - servers port
@@ -56,16 +68,20 @@ public class HelloUDPClient implements HelloClient {
                             socket.send(new DatagramPacket(forSnd, forSnd.length, address, port));
                         } catch (IOException e) {
                             System.out.println("Data can not be sent via this socket");
+                            return;
                         }
                         DatagramPacket serversAnswerInPacket = new DatagramPacket(forRec, forRec.length);
                         try {
                             socket.receive(serversAnswerInPacket);
-                            String answer = new String(serversAnswerInPacket.getData(), 0, serversAnswerInPacket.getLength());
-                            if (!answer.contains(curQueryText)) {
-                                --j;
-                            }
                         } catch (IOException e) {
                             //System.out.println("rofl");
+                            --j;
+                            continue;
+                        }
+
+                        String answer = new String(serversAnswerInPacket.getData(), 0, serversAnswerInPacket.getLength());
+                        System.out.println(answer);
+                        if (!answer.contains(curQueryText)) {
                             --j;
                         }
                     }
